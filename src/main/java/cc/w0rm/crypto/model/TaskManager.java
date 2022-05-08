@@ -42,10 +42,10 @@ public class TaskManager<T> {
             T t = null;
             try {
                 for (; ; ) {
+                    if (threadPoolExecutor.isShutdown()) {
+                        return;
+                    }
                     if (CollectionUtils.isEmpty(queue) && finishCount.get() == taskCount) {
-                        if (threadPoolExecutor.isShutdown()) {
-                            return;
-                        }
                         synchronized (TaskManager.class) {
                             if (threadPoolExecutor.isShutdown()) {
                                 return;
@@ -73,8 +73,8 @@ public class TaskManager<T> {
     }
 
     public void remove() {
-        finishCount.set(0);
-        queue.clear();
         scheduledThreadPoolExecutor.shutdown();
+        queue.clear();
+        finishCount.set(0);
     }
 }
