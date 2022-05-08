@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.w0rm.crypto.db.mappter.TaskMapperExt">
+    <insert id="insertIgnore" parameterType="cc.w0rm.crypto.db.domain.Task" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+        insert
+        ignore into task
+        (
+        biz_id, inst_id, bar, begin, end, task_limit, task_threads, task_interval, create_at
+        )
+        values (
+        #{bizId,jdbcType=VARCHAR},
+        #{instId,jdbcType=VARCHAR},
+        #{bar,jdbcType=VARCHAR},
+        #{begin,jdbcType=BIGINT},
+        #{end,jdbcType=BIGINT},
+        #{taskLimit,jdbcType=INTEGER},
+        #{taskThreads,jdbcType=INTEGER},
+        #{taskInterval,jdbcType=BIGINT},
+        #{createAt,jdbcType=TIMESTAMP}
+        )
+    </insert>
+</mapper>

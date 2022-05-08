@@ -20,8 +20,16 @@
             </dataSource>
         </environment>
     </environments>
+
     <mappers>
         <mapper resource="mapper/Btc1mMapper.xml"/>
         <mapper resource="mapper/Btc1mMapperExt.xml"/>
+
+        <mapper resource="mapper/TaskMapper.xml"/>
+        <mapper resource="mapper/TaskMapperExt.xml"/>
+
+        <mapper resource="mapper/TaskDetailMapper.xml"/>
+        <mapper resource="mapper/TaskDetailMapperExt.xml"/>
     </mappers>
+
 </configuration>

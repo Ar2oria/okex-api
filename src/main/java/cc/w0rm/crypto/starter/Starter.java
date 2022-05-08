@@ -13,8 +13,8 @@ public class Starter {
         SaveCryptoConfig saveCryptoConfig = new SaveCryptoConfig();
         saveCryptoConfig.setInstId("BTC-USDT");
         saveCryptoConfig.setBar(Bar.C_1M);
-        saveCryptoConfig.setBegin(DateTimeUtil.parseTs("2020-01-01", "yyyy-MM-dd"));
-        saveCryptoConfig.setEnd(DateTimeUtil.nowTs());
+        saveCryptoConfig.setBegin(DateTimeUtil.parseDateTs("2020-01-01"));
+        saveCryptoConfig.setEnd(DateTimeUtil.parseDateTs("2022-05-08"));
         saveCryptoConfig.setLimit(100);
         saveCryptoConfig.setThreads(10);
         saveCryptoConfig.setInterval(1000 / 20);

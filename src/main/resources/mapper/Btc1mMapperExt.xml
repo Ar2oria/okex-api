@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.w0rm.crypto.db.mappter.Btc1mMapperExt">
 
-    <insert id="batchInsertIgnore" parameterType="java.util.List">
+    <insert id="batchInsertIgnore" parameterType="java.util.List" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
         insert ignore into btc_1m
         (ts, o, h,l, c, vol, volCcy)
         values

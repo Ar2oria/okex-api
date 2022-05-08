@@ -102,20 +102,15 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cc.w0rm.crypto.db.domain.Btc1m">
-    insert into btc_1m (id, ts, o, h, 
-      l, c, vol, volCcy
-      )
-    values (#{id,jdbcType=INTEGER}, #{ts,jdbcType=BIGINT}, #{o,jdbcType=DECIMAL}, #{h,jdbcType=DECIMAL}, 
-      #{l,jdbcType=DECIMAL}, #{c,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{volccy,jdbcType=DECIMAL}
-      )
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="cc.w0rm.crypto.db.domain.Btc1m" useGeneratedKeys="true">
+    insert into btc_1m (ts, o, h, l, 
+      c, vol, volCcy)
+    values (#{ts,jdbcType=BIGINT}, #{o,jdbcType=DECIMAL}, #{h,jdbcType=DECIMAL}, #{l,jdbcType=DECIMAL}, 
+      #{c,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{volccy,jdbcType=DECIMAL})
   </insert>
-  <insert id="insertSelective" parameterType="cc.w0rm.crypto.db.domain.Btc1m">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cc.w0rm.crypto.db.domain.Btc1m" useGeneratedKeys="true">
     insert into btc_1m
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="ts != null">
         ts,
       </if>
@@ -139,9 +134,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="ts != null">
         #{ts,jdbcType=BIGINT},
       </if>

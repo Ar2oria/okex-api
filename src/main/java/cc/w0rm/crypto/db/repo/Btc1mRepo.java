@@ -10,6 +10,9 @@ import java.util.List;
 
 public class Btc1mRepo extends BaseRepo {
 
+    private Btc1mMapper btc1mMapper = DbManager.getMapper(Btc1mMapper.class, getSqlSession());
+    private Btc1mMapperExt btc1mMapperExt = DbManager.getMapper(Btc1mMapperExt.class, getSqlSession());
+
     public Btc1mRepo() {
         super();
     }
@@ -18,8 +21,6 @@ public class Btc1mRepo extends BaseRepo {
         super(session);
     }
 
-    private Btc1mMapper btc1mMapper = DbManager.getMapper(Btc1mMapper.class, getSqlSession());
-    private Btc1mMapperExt btc1mMapperExt = DbManager.getMapper(Btc1mMapperExt.class, getSqlSession());
 
     public int batchInsertIgnore(List<Btc1m> list) {
         return btc1mMapperExt.batchInsertIgnore(list);

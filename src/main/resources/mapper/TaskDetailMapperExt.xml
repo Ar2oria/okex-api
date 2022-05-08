@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.w0rm.crypto.db.mappter.TaskDetailMapperExt">
+    <insert id="batchInsertIgnore" parameterType="java.util.List" keyColumn="id" keyProperty="id"
+            useGeneratedKeys="true">
+        insert
+        ignore into task_detail
+        (
+        biz_id, inst_id, bar,params, status, start_at, create_at, update_at
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.bizId,jdbcType=VARCHAR},
+            #{item.instId,jdbcType=VARCHAR},
+            #{item.bar,jdbcType=VARCHAR},
+            #{item.params,jdbcType=VARCHAR},
+            #{item.status,jdbcType=INTEGER},
+            #{item.startAt,jdbcType=BIGINT},
+            #{item.createAt,jdbcType=TIMESTAMP},
+            #{item.updateAt,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+
+    </insert>
+    <select id="selectUnfinishedTaskByBizId" resultType="cc.w0rm.crypto.db.domain.TaskDetail">
+        select *
+        from task_detail
+        where id > #{minId}
+          and biz_id = #{bizId}
+          and status = 0
+        order by id ASC
+            limit #{limit}
+    </select>
+</mapper>

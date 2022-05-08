@@ -42,6 +42,13 @@
         </javaClientGenerator>
 
         <table tableName="btc_1m">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="task">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="task_detail">
+            <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
     </context>
