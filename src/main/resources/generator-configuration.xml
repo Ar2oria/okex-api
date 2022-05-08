@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <properties resource="db.properties"/>
+
+    <context id="myContext" targetRuntime="MyBatis3">
+
+        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
+
+        <commentGenerator>
+            <!-- 添加 db 表中字段的注释 -->
+            <property name="addRemarkComments" value="false"/>
+            <!-- 是否不生成注释 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="${url}"
+                        userId="${userId}"
+                        password="${pwd}">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="cc.w0rm.crypto.db.domain" targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="false"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <!--            <property name="enableSubPackages" value="false"/>-->
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="cc.w0rm.crypto.db.mappter" targetProject="src/main/java">
+            <!--            <property name="enableSubPackages" value="false"/>-->
+        </javaClientGenerator>
+
+        <table tableName="btc_1m">
+        </table>
+
+    </context>
+</generatorConfiguration>

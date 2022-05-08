@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties resource="db.properties"/>
+
+    <environments default="mysql">
+        <environment id="mysql">
+            <transactionManager type="JDBC"/>
+            <dataSource type="cc.w0rm.crypto.config.DataSourceFactory">
+                <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="jdbcUrl" value="${url}"/>
+                <property name="user" value="${userId}"/>
+                <property name="password" value="${pwd}"/>
+                <property name="acquireIncrement" value="3"/>
+                <property name="initialPoolSize" value="10"/>
+                <property name="minPoolSize" value="5"/>
+                <property name="maxPoolSize" value="10"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="mapper/Btc1mMapper.xml"/>
+        <mapper resource="mapper/Btc1mMapperExt.xml"/>
+    </mappers>
+</configuration>

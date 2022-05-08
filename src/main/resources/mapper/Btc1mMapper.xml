@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.w0rm.crypto.db.mappter.Btc1mMapper">
+  <resultMap id="BaseResultMap" type="cc.w0rm.crypto.db.domain.Btc1m">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ts" jdbcType="BIGINT" property="ts" />
+    <result column="o" jdbcType="DECIMAL" property="o" />
+    <result column="h" jdbcType="DECIMAL" property="h" />
+    <result column="l" jdbcType="DECIMAL" property="l" />
+    <result column="c" jdbcType="DECIMAL" property="c" />
+    <result column="vol" jdbcType="DECIMAL" property="vol" />
+    <result column="volCcy" jdbcType="DECIMAL" property="volccy" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, ts, o, h, l, c, vol, volCcy
+  </sql>
+  <select id="selectByExample" parameterType="cc.w0rm.crypto.db.domain.Btc1mExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from btc_1m
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from btc_1m
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from btc_1m
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cc.w0rm.crypto.db.domain.Btc1mExample">
+    delete from btc_1m
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cc.w0rm.crypto.db.domain.Btc1m">
+    insert into btc_1m (id, ts, o, h, 
+      l, c, vol, volCcy
+      )
+    values (#{id,jdbcType=INTEGER}, #{ts,jdbcType=BIGINT}, #{o,jdbcType=DECIMAL}, #{h,jdbcType=DECIMAL}, 
+      #{l,jdbcType=DECIMAL}, #{c,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{volccy,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cc.w0rm.crypto.db.domain.Btc1m">
+    insert into btc_1m
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="ts != null">
+        ts,
+      </if>
+      <if test="o != null">
+        o,
+      </if>
+      <if test="h != null">
+        h,
+      </if>
+      <if test="l != null">
+        l,
+      </if>
+      <if test="c != null">
+        c,
+      </if>
+      <if test="vol != null">
+        vol,
+      </if>
+      <if test="volccy != null">
+        volCcy,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ts != null">
+        #{ts,jdbcType=BIGINT},
+      </if>
+      <if test="o != null">
+        #{o,jdbcType=DECIMAL},
+      </if>
+      <if test="h != null">
+        #{h,jdbcType=DECIMAL},
+      </if>
+      <if test="l != null">
+        #{l,jdbcType=DECIMAL},
+      </if>
+      <if test="c != null">
+        #{c,jdbcType=DECIMAL},
+      </if>
+      <if test="vol != null">
+        #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="volccy != null">
+        #{volccy,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cc.w0rm.crypto.db.domain.Btc1mExample" resultType="java.lang.Long">
+    select count(*) from btc_1m
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update btc_1m
+    <set>
+      <if test="row.id != null">
+        id = #{row.id,jdbcType=INTEGER},
+      </if>
+      <if test="row.ts != null">
+        ts = #{row.ts,jdbcType=BIGINT},
+      </if>
+      <if test="row.o != null">
+        o = #{row.o,jdbcType=DECIMAL},
+      </if>
+      <if test="row.h != null">
+        h = #{row.h,jdbcType=DECIMAL},
+      </if>
+      <if test="row.l != null">
+        l = #{row.l,jdbcType=DECIMAL},
+      </if>
+      <if test="row.c != null">
+        c = #{row.c,jdbcType=DECIMAL},
+      </if>
+      <if test="row.vol != null">
+        vol = #{row.vol,jdbcType=DECIMAL},
+      </if>
+      <if test="row.volccy != null">
+        volCcy = #{row.volccy,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="example != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update btc_1m
+    set id = #{row.id,jdbcType=INTEGER},
+      ts = #{row.ts,jdbcType=BIGINT},
+      o = #{row.o,jdbcType=DECIMAL},
+      h = #{row.h,jdbcType=DECIMAL},
+      l = #{row.l,jdbcType=DECIMAL},
+      c = #{row.c,jdbcType=DECIMAL},
+      vol = #{row.vol,jdbcType=DECIMAL},
+      volCcy = #{row.volccy,jdbcType=DECIMAL}
+    <if test="example != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.w0rm.crypto.db.domain.Btc1m">
+    update btc_1m
+    <set>
+      <if test="ts != null">
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+      <if test="o != null">
+        o = #{o,jdbcType=DECIMAL},
+      </if>
+      <if test="h != null">
+        h = #{h,jdbcType=DECIMAL},
+      </if>
+      <if test="l != null">
+        l = #{l,jdbcType=DECIMAL},
+      </if>
+      <if test="c != null">
+        c = #{c,jdbcType=DECIMAL},
+      </if>
+      <if test="vol != null">
+        vol = #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="volccy != null">
+        volCcy = #{volccy,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.w0rm.crypto.db.domain.Btc1m">
+    update btc_1m
+    set ts = #{ts,jdbcType=BIGINT},
+      o = #{o,jdbcType=DECIMAL},
+      h = #{h,jdbcType=DECIMAL},
+      l = #{l,jdbcType=DECIMAL},
+      c = #{c,jdbcType=DECIMAL},
+      vol = #{vol,jdbcType=DECIMAL},
+      volCcy = #{volccy,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
