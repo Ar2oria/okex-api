@@ -1,4 +1,4 @@
-CREATE TABLE `eth_usdt_1min`
+CREATE TABLE `${tableName}`
 (
     `id`     int            NOT NULL AUTO_INCREMENT,
     `ts`     bigint(20) default 0 NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE `eth_usdt_1min`
     `l`      decimal(16, 8) NOT NULL,
     `c`      decimal(16, 8) NOT NULL,
     `vol`    decimal(16, 8) NOT NULL,
-    `volCcy` decimal(16, 8) NOT NULL,
+    `vol_ccy` decimal(16, 8) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uni_idx_ts` (`ts`),
     KEY      `idx_o` (`o`),
@@ -15,11 +15,11 @@ CREATE TABLE `eth_usdt_1min`
     KEY      `idx_l` (`l`),
     KEY      `idx_c` (`c`),
     KEY      `idx_vol` (`vol`),
-    KEY      `idx_volCcy` (`volCcy`)
+    KEY      `idx_vol_ccy` (`vol_ccy`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-create table task
+create table `task`
 (
     `id`            int         NOT NULL primary key AUTO_INCREMENT,
     `biz_id`        varchar(32) not null,
@@ -35,12 +35,10 @@ create table task
 )ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-create table task_detail
+create table `task_detail`
 (
     `id`        int           NOT NULL primary key AUTO_INCREMENT,
     `biz_id`    varchar(32)   not null,
-    `inst_id`   varchar(32)   not null,
-    `bar`       varchar(32)   not null,
     `params`    varchar(2000) not null default '',
     `status`    int           not null default 0 COMMENT '0 默认状态 1 已完成',
     `start_at`  bigint(20) not null,

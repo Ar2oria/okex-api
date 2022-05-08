@@ -8,4 +8,8 @@ import java.util.List;
 public interface CandlesMapper {
 
     int batchInsertIgnore(@Param("tableName") String tableName, @Param("list") List<Candles> list);
+
+    Candles selectAny(@Param("tableName") String tableName);
+
+    int createTable(@Param("tableName") String tableName);
 }

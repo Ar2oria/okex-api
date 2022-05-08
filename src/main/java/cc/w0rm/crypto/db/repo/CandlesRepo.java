@@ -23,4 +23,11 @@ public class CandlesRepo extends BaseRepo {
         return candlesMapper.batchInsertIgnore(tableName, list);
     }
 
+    public Candles selectAny(String tableName) {
+        return candlesMapper.selectAny(tableName);
+    }
+
+    public int createTable(String tableName) throws Exception {
+        return candlesMapper.createTable(tableName);
+    }
 }

@@ -23,6 +23,9 @@ public class DbServiceImpl implements DbService {
 
     private static final int MAX_SIZE = 100;
 
+    private CandlesRepo candlesRepo = new CandlesRepo();
+    private TaskDetailRepo taskDetailRepo = new TaskDetailRepo();
+
     @Override
     public int saveTask(TaskBO taskBO) throws Exception {
         return DbManager.openTx(sqlSess -> {
@@ -52,21 +55,17 @@ public class DbServiceImpl implements DbService {
             return 0;
         }
 
-        CandlesRepo repo = new CandlesRepo();
-
         int returnVal = 0;
 
         List<List<Candles>> partition = Lists.partition(candlesList, MAX_SIZE);
         for (List<Candles> part : partition) {
-            returnVal += repo.batchInsertIgnore(tableName, part);
+            returnVal += candlesRepo.batchInsertIgnore(tableName, part);
         }
         return returnVal;
     }
 
     @Override
     public List<TaskDetail> selectTaskDetailListByBizId(String bizId) {
-        TaskDetailRepo taskDetailRepo = new TaskDetailRepo();
-
         int minId = 0;
 
         List<TaskDetail> returnVal = new ArrayList<>();
@@ -88,7 +87,24 @@ public class DbServiceImpl implements DbService {
             throw new BizException("完成任务状态失败，任务id为空! req = " + JsonUtil.toJson(taskDetail));
         }
 
-        TaskDetailRepo taskDetailRepo = new TaskDetailRepo();
         taskDetailRepo.finishTaskById(taskDetail.getId());
+    }
+
+    @Override
+    public synchronized void createCandlesTable(String tableName) throws Exception {
+        if (existsTable(tableName)){
+            return;
+        }
+
+        candlesRepo.createTable(tableName);
+    }
+
+    private boolean existsTable(String tableName) {
+        try {
+            candlesRepo.selectAny(tableName);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 }

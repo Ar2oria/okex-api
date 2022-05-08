@@ -17,7 +17,7 @@ public class Candles {
 
     private BigDecimal vol;
 
-    private BigDecimal volccy;
+    private BigDecimal volCcy;
 
     public Integer getId() {
         return id;
@@ -75,12 +75,12 @@ public class Candles {
         this.vol = vol;
     }
 
-    public BigDecimal getVolccy() {
-        return volccy;
+    public BigDecimal getVolCcy() {
+        return volCcy;
     }
 
-    public void setVolccy(BigDecimal volccy) {
-        this.volccy = volccy;
+    public void setVolCcy(BigDecimal volCcy) {
+        this.volCcy = volCcy;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Candles {
                 && (this.getL() == null ? other.getL() == null : this.getL().equals(other.getL()))
                 && (this.getC() == null ? other.getC() == null : this.getC().equals(other.getC()))
                 && (this.getVol() == null ? other.getVol() == null : this.getVol().equals(other.getVol()))
-                && (this.getVolccy() == null ? other.getVolccy() == null : this.getVolccy().equals(other.getVolccy()));
+                && (this.getVolCcy() == null ? other.getVolCcy() == null : this.getVolCcy().equals(other.getVolCcy()));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class Candles {
         result = prime * result + ((getL() == null) ? 0 : getL().hashCode());
         result = prime * result + ((getC() == null) ? 0 : getC().hashCode());
         result = prime * result + ((getVol() == null) ? 0 : getVol().hashCode());
-        result = prime * result + ((getVolccy() == null) ? 0 : getVolccy().hashCode());
+        result = prime * result + ((getVolCcy() == null) ? 0 : getVolCcy().hashCode());
         return result;
     }
 }

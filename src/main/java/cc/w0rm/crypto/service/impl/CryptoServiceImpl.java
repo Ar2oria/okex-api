@@ -10,6 +10,7 @@ import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
 import cc.w0rm.crypto.model.TaskManager;
 import cc.w0rm.crypto.model.bo.HistoryCandlesBO;
 import cc.w0rm.crypto.model.bo.SaveCryptoConfig;
+import cc.w0rm.crypto.model.bo.TableInfoBO;
 import cc.w0rm.crypto.model.bo.TaskBO;
 import cc.w0rm.crypto.model.dto.CandlesDTO;
 import cc.w0rm.crypto.model.dto.HistoryCandlesRequestDTO;
@@ -41,6 +42,8 @@ public class CryptoServiceImpl implements CryptoService {
             task.remove();
         }
 
+        TableInfoBO tableInfoBO = createTable(config);
+
         List<HistoryCandlesBO> taskList = saveTask(config);
         if (CollectionUtils.isEmpty(taskList)) {
             log.warn("任务列表为空。");
@@ -54,15 +57,22 @@ public class CryptoServiceImpl implements CryptoService {
             List<CandlesDTO> candlesList = okexClient.queryHistoryCandles(historyCandlesBO.getRequestDTO());
             List<Candles> candlesEntryList = convert2CandlesList(candlesList);
 
-            String tableName = getTableName(historyCandlesBO.getTaskDetail());
-
-            int count = dbService.saveHistoryCandles(tableName, candlesEntryList);
+            int count = dbService.saveHistoryCandles(tableInfoBO.getTableName(), candlesEntryList);
             dbService.finishTaskDetail(historyCandlesBO.getTaskDetail());
 
             log.info("taskDetailId:{}, save:{}.", historyCandlesBO.getTaskDetail().getId(), count);
         }, taskName, config.getThreads(), config.getInterval());
 
         taskMap.put(taskName, taskManager);
+    }
+
+    private TableInfoBO createTable(SaveCryptoConfig config) throws Exception {
+        String tableName = getTableName(config);
+        dbService.createCandlesTable(tableName);
+
+        TableInfoBO returnVal = new TableInfoBO();
+        returnVal.setTableName(tableName);
+        return returnVal;
     }
 
     private List<HistoryCandlesBO> saveTask(SaveCryptoConfig config) throws Exception {
@@ -111,11 +121,11 @@ public class CryptoServiceImpl implements CryptoService {
     }
 
 
-    private String getTableName(TaskDetail taskDetail) {
-        String instID = taskDetail.getInstId().replace("-", "_");
+    private String getTableName(SaveCryptoConfig config) {
+        String instID = config.getInstId().replace("-", "_");
         instID = instID.toLowerCase(Locale.ROOT);
 
-        return instID + "_" + taskDetail.getBar();
+        return instID + "_" + config.getBar().getDesc();
     }
 
     private static HistoryCandlesRequestDTO newForHistoryCandlesTask(long start, long end, SaveCryptoConfig config) {
@@ -146,7 +156,7 @@ public class CryptoServiceImpl implements CryptoService {
         returnVal.setH(candlesDTO.getHigh());
         returnVal.setL(candlesDTO.getLow());
         returnVal.setVol(candlesDTO.getVolume());
-        returnVal.setVolccy(candlesDTO.getVolCcy());
+        returnVal.setVolCcy(candlesDTO.getVolCcy());
 
         return returnVal;
     }
@@ -174,8 +184,6 @@ public class CryptoServiceImpl implements CryptoService {
                 .map(sub -> {
                     TaskDetail taskDetail = new TaskDetail();
                     taskDetail.setBizId(task.getBizId());
-                    taskDetail.setInstId(task.getInstId());
-                    taskDetail.setBar(task.getBar());
                     taskDetail.setParams(JsonUtil.toJson(sub));
                     taskDetail.setStatus(TaskDetailStatusEnum.DEFAULT.getCode());
                     taskDetail.setStartAt(0L);

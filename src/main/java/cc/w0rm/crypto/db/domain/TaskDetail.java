@@ -7,10 +7,6 @@ public class TaskDetail {
 
     private String bizId;
 
-    private String instId;
-
-    private String bar;
-
     private String params;
 
     private Integer status;
@@ -35,22 +31,6 @@ public class TaskDetail {
 
     public void setBizId(String bizId) {
         this.bizId = bizId;
-    }
-
-    public String getInstId() {
-        return instId;
-    }
-
-    public void setInstId(String instId) {
-        this.instId = instId;
-    }
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
     }
 
     public String getParams() {
@@ -107,8 +87,6 @@ public class TaskDetail {
         TaskDetail other = (TaskDetail) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getBizId() == null ? other.getBizId() == null : this.getBizId().equals(other.getBizId()))
-            && (this.getInstId() == null ? other.getInstId() == null : this.getInstId().equals(other.getInstId()))
-            && (this.getBar() == null ? other.getBar() == null : this.getBar().equals(other.getBar()))
             && (this.getParams() == null ? other.getParams() == null : this.getParams().equals(other.getParams()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getStartAt() == null ? other.getStartAt() == null : this.getStartAt().equals(other.getStartAt()))
@@ -122,8 +100,6 @@ public class TaskDetail {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getBizId() == null) ? 0 : getBizId().hashCode());
-        result = prime * result + ((getInstId() == null) ? 0 : getInstId().hashCode());
-        result = prime * result + ((getBar() == null) ? 0 : getBar().hashCode());
         result = prime * result + ((getParams() == null) ? 0 : getParams().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getStartAt() == null) ? 0 : getStartAt().hashCode());

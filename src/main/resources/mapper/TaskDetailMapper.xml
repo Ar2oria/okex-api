@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="cc.w0rm.crypto.db.domain.TaskDetail">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="biz_id" jdbcType="VARCHAR" property="bizId" />
-    <result column="inst_id" jdbcType="VARCHAR" property="instId" />
-    <result column="bar" jdbcType="VARCHAR" property="bar" />
     <result column="params" jdbcType="VARCHAR" property="params" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="start_at" jdbcType="BIGINT" property="startAt" />
@@ -71,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, biz_id, inst_id, bar, params, status, start_at, create_at, update_at
+    id, biz_id, params, status, start_at, create_at, update_at
   </sql>
   <select id="selectByExample" parameterType="cc.w0rm.crypto.db.domain.TaskDetailExample" resultMap="BaseResultMap">
     select
@@ -104,24 +102,18 @@
     </if>
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="cc.w0rm.crypto.db.domain.TaskDetail" useGeneratedKeys="true">
-    insert into task_detail (biz_id, inst_id, bar, 
-      params, status, start_at, 
-      create_at, update_at)
-    values (#{bizId,jdbcType=VARCHAR}, #{instId,jdbcType=VARCHAR}, #{bar,jdbcType=VARCHAR}, 
-      #{params,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{startAt,jdbcType=BIGINT}, 
-      #{createAt,jdbcType=TIMESTAMP}, #{updateAt,jdbcType=TIMESTAMP})
+    insert into task_detail (biz_id, params, status, 
+      start_at, create_at, update_at
+      )
+    values (#{bizId,jdbcType=VARCHAR}, #{params,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{startAt,jdbcType=BIGINT}, #{createAt,jdbcType=TIMESTAMP}, #{updateAt,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cc.w0rm.crypto.db.domain.TaskDetail" useGeneratedKeys="true">
     insert into task_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="bizId != null">
         biz_id,
-      </if>
-      <if test="instId != null">
-        inst_id,
-      </if>
-      <if test="bar != null">
-        bar,
       </if>
       <if test="params != null">
         params,
@@ -142,12 +134,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="bizId != null">
         #{bizId,jdbcType=VARCHAR},
-      </if>
-      <if test="instId != null">
-        #{instId,jdbcType=VARCHAR},
-      </if>
-      <if test="bar != null">
-        #{bar,jdbcType=VARCHAR},
       </if>
       <if test="params != null">
         #{params,jdbcType=VARCHAR},
@@ -181,12 +167,6 @@
       <if test="row.bizId != null">
         biz_id = #{row.bizId,jdbcType=VARCHAR},
       </if>
-      <if test="row.instId != null">
-        inst_id = #{row.instId,jdbcType=VARCHAR},
-      </if>
-      <if test="row.bar != null">
-        bar = #{row.bar,jdbcType=VARCHAR},
-      </if>
       <if test="row.params != null">
         params = #{row.params,jdbcType=VARCHAR},
       </if>
@@ -211,8 +191,6 @@
     update task_detail
     set id = #{row.id,jdbcType=INTEGER},
       biz_id = #{row.bizId,jdbcType=VARCHAR},
-      inst_id = #{row.instId,jdbcType=VARCHAR},
-      bar = #{row.bar,jdbcType=VARCHAR},
       params = #{row.params,jdbcType=VARCHAR},
       status = #{row.status,jdbcType=INTEGER},
       start_at = #{row.startAt,jdbcType=BIGINT},
@@ -227,12 +205,6 @@
     <set>
       <if test="bizId != null">
         biz_id = #{bizId,jdbcType=VARCHAR},
-      </if>
-      <if test="instId != null">
-        inst_id = #{instId,jdbcType=VARCHAR},
-      </if>
-      <if test="bar != null">
-        bar = #{bar,jdbcType=VARCHAR},
       </if>
       <if test="params != null">
         params = #{params,jdbcType=VARCHAR},
@@ -255,8 +227,6 @@
   <update id="updateByPrimaryKey" parameterType="cc.w0rm.crypto.db.domain.TaskDetail">
     update task_detail
     set biz_id = #{bizId,jdbcType=VARCHAR},
-      inst_id = #{instId,jdbcType=VARCHAR},
-      bar = #{bar,jdbcType=VARCHAR},
       params = #{params,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       start_at = #{startAt,jdbcType=BIGINT},

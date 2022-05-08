@@ -6,14 +6,12 @@
         insert
         ignore into task_detail
         (
-        biz_id, inst_id, bar,params, status, start_at, create_at, update_at
+        biz_id, params, status, start_at, create_at, update_at
         )
         values
         <foreach collection="list" item="item" separator=",">
             (
             #{item.bizId,jdbcType=VARCHAR},
-            #{item.instId,jdbcType=VARCHAR},
-            #{item.bar,jdbcType=VARCHAR},
             #{item.params,jdbcType=VARCHAR},
             #{item.status,jdbcType=INTEGER},
             #{item.startAt,jdbcType=BIGINT},

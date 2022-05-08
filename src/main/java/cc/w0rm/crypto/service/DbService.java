@@ -14,4 +14,6 @@ public interface DbService {
     List<TaskDetail> selectTaskDetailListByBizId(String generateBizId);
 
     void finishTaskDetail(TaskDetail taskDetail) throws Exception;
+
+    void createCandlesTable(String tableName) throws Exception;
 }
