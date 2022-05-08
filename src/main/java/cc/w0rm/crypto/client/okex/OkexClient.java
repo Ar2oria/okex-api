@@ -4,14 +4,16 @@ import cc.w0rm.crypto.biz.BizException;
 import cc.w0rm.crypto.client.Client;
 import cc.w0rm.crypto.common.DateTimeUtil;
 import cc.w0rm.crypto.common.JsonUtil;
+import cc.w0rm.crypto.config.GlobalConfig;
+import cc.w0rm.crypto.model.bo.OkApiConfig;
 import cc.w0rm.crypto.model.dto.BaseResponse;
 import cc.w0rm.crypto.model.dto.CandlesDTO;
 import cc.w0rm.crypto.model.dto.HistoryCandlesRequestDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import sun.misc.BASE64Encoder;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -67,9 +69,19 @@ public class OkexClient implements Client {
 
     static class OkexAuth implements Interceptor {
 
-        static final String ID = "0730e250-9a89-4ea9-8de2-2b9a097c8241";
-        static final String SECRET = "0231410415452EA010C6F7ECC7E34E41";
-        static final String PWD = "Yh3yxyz...";
+        static final OkApiConfig OK_API_CONFIG = GlobalConfig.getOkApiConfig();
+        static final String ID;
+        static final String SECRET;
+        static final String PWD;
+
+        static {
+            if (Objects.isNull(OK_API_CONFIG)) {
+                throw new IllegalStateException("缺少okex-api配置，请检查配置文件！");
+            }
+            ID = OK_API_CONFIG.getId();
+            SECRET = OK_API_CONFIG.getSecret();
+            PWD = OK_API_CONFIG.getPwd();
+        }
 
         @NotNull
         @Override
@@ -94,6 +106,7 @@ public class OkexClient implements Client {
 
         static final Mac SHA256;
         static final String HMAC_SHA256 = "HmacSHA256";
+        static final BASE64Encoder BASE_64_ENCODER = new BASE64Encoder();
 
         static {
             try {
@@ -119,7 +132,7 @@ public class OkexClient implements Client {
 
         private String calcSign(String data) {
             byte[] bytes = SHA256.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            return Base64.encode(bytes);
+            return BASE_64_ENCODER.encode(bytes);
         }
     }
 
