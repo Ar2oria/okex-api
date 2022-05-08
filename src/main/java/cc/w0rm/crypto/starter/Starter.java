@@ -1,7 +1,7 @@
 package cc.w0rm.crypto.starter;
 
 import cc.w0rm.crypto.common.DateTimeUtil;
-import cc.w0rm.crypto.model.bo.SaveCryptoConfig;
+import cc.w0rm.crypto.model.SaveCryptoConfig;
 import cc.w0rm.crypto.model.enums.Bar;
 import cc.w0rm.crypto.service.CryptoService;
 import cc.w0rm.crypto.service.impl.CryptoServiceImpl;

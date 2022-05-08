@@ -9,7 +9,7 @@ import cc.w0rm.crypto.db.domain.TaskDetail;
 import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
 import cc.w0rm.crypto.model.TaskManager;
 import cc.w0rm.crypto.model.bo.HistoryCandlesBO;
-import cc.w0rm.crypto.model.bo.SaveCryptoConfig;
+import cc.w0rm.crypto.model.SaveCryptoConfig;
 import cc.w0rm.crypto.model.bo.TableInfoBO;
 import cc.w0rm.crypto.model.bo.TaskBO;
 import cc.w0rm.crypto.model.dto.CandlesDTO;
