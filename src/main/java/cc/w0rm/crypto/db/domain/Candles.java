@@ -2,7 +2,7 @@ package cc.w0rm.crypto.db.domain;
 
 import java.math.BigDecimal;
 
-public class Crypto {
+public class Candles {
     private Integer id;
 
     private Long ts;
@@ -94,7 +94,7 @@ public class Crypto {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Crypto other = (Crypto) that;
+        Candles other = (Candles) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getTs() == null ? other.getTs() == null : this.getTs().equals(other.getTs()))
                 && (this.getO() == null ? other.getO() == null : this.getO().equals(other.getO()))

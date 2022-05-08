@@ -3,7 +3,7 @@ package cc.w0rm.crypto.service.impl;
 import cc.w0rm.crypto.biz.BizException;
 import cc.w0rm.crypto.client.okex.OkexClient;
 import cc.w0rm.crypto.common.JsonUtil;
-import cc.w0rm.crypto.db.domain.Crypto;
+import cc.w0rm.crypto.db.domain.Candles;
 import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskDetail;
 import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
@@ -48,8 +48,8 @@ public class CryptoServiceImpl implements CryptoService {
                 return;
             }
             List<CandlesDTO> candlesList = okexClient.queryHistoryCandles(historyCandlesBO.getRequestDTO());
-            List<Crypto> cryptoList = convert2CryptoList(candlesList);
-            int count = dbService.saveHistoryCandles(getTableName(historyCandlesBO.getTaskDetail()), cryptoList);
+            List<Candles> candlesEntryList = convert2CryptoList(candlesList);
+            int count = dbService.saveHistoryCandles(getTableName(historyCandlesBO.getTaskDetail()), candlesEntryList);
             dbService.finishTaskDetail(historyCandlesBO.getTaskDetail());
 
             log.info("taskDetailId:{}, save:{}.", historyCandlesBO.getTaskDetail().getId(), count);
@@ -121,7 +121,7 @@ public class CryptoServiceImpl implements CryptoService {
                 .build();
     }
 
-    private List<Crypto> convert2CryptoList(List<CandlesDTO> candlesList) {
+    private List<Candles> convert2CryptoList(List<CandlesDTO> candlesList) {
         if (CollectionUtils.isEmpty(candlesList)) {
             return Collections.emptyList();
         }
@@ -131,8 +131,8 @@ public class CryptoServiceImpl implements CryptoService {
                 .collect(Collectors.toList());
     }
 
-    private Crypto convert2Crypto(CandlesDTO candlesDTO) {
-        Crypto returnVal = new Crypto();
+    private Candles convert2Crypto(CandlesDTO candlesDTO) {
+        Candles returnVal = new Candles();
         returnVal.setTs(candlesDTO.getTs());
         returnVal.setO(candlesDTO.getOpen());
         returnVal.setC(candlesDTO.getClose());
@@ -149,7 +149,7 @@ public class CryptoServiceImpl implements CryptoService {
         Task task = new Task();
         task.setBizId(taskConfig.generateBizId());
         task.setInstId(taskConfig.getInstId());
-        task.setBar(taskConfig.getBar().toString());
+        task.setBar(taskConfig.getBar().getDesc());
         task.setBegin(taskConfig.getBegin());
         task.setEnd(taskConfig.getEnd());
         task.setTaskLimit(taskConfig.getLimit());
