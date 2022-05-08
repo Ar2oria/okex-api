@@ -44,13 +44,7 @@
             `vol`    decimal(16, 8) NOT NULL,
             `vol_ccy` decimal(16, 8) NOT NULL,
             PRIMARY KEY (`id`),
-            UNIQUE KEY `uni_idx_ts` (`ts`),
-            KEY      `idx_o` (`o`),
-            KEY      `idx_h` (`h`),
-            KEY      `idx_l` (`l`),
-            KEY      `idx_c` (`c`),
-            KEY      `idx_vol` (`vol`),
-            KEY      `idx_vol_ccy` (`vol_ccy`)
+            UNIQUE KEY `uni_idx_ts` (`ts`)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
         <selectKey>
             select 1;
