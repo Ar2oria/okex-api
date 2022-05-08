@@ -1,4 +1,4 @@
-package cc.w0rm.crypto.db.mappter;
+package cc.w0rm.crypto.db.mapper;
 
 import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskExample;

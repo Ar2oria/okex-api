@@ -2,8 +2,8 @@ package cc.w0rm.crypto.db.repo;
 
 import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskExample;
-import cc.w0rm.crypto.db.mappter.TaskMapper;
-import cc.w0rm.crypto.db.mappter.TaskMapperExt;
+import cc.w0rm.crypto.db.mapper.TaskMapper;
+import cc.w0rm.crypto.db.mapper.TaskMapperExt;
 import cc.w0rm.crypto.manager.DbManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.session.SqlSession;

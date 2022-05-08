@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cc.w0rm.crypto.db.mappter.TaskMapperExt">
-    <insert id="insertIgnore" parameterType="cc.w0rm.crypto.db.domain.Task" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+<mapper namespace="cc.w0rm.crypto.db.mapper.TaskMapperExt">
+    <insert id="insertIgnore" parameterType="cc.w0rm.crypto.db.domain.Task" keyColumn="id" keyProperty="id"
+            useGeneratedKeys="true">
         insert
         ignore into task
         (

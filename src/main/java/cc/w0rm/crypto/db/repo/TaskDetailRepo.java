@@ -3,8 +3,8 @@ package cc.w0rm.crypto.db.repo;
 import cc.w0rm.crypto.db.domain.TaskDetail;
 import cc.w0rm.crypto.db.domain.TaskDetailExample;
 import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
-import cc.w0rm.crypto.db.mappter.TaskDetailMapper;
-import cc.w0rm.crypto.db.mappter.TaskDetailMapperExt;
+import cc.w0rm.crypto.db.mapper.TaskDetailMapper;
+import cc.w0rm.crypto.db.mapper.TaskDetailMapperExt;
 import cc.w0rm.crypto.manager.DbManager;
 import org.apache.ibatis.session.SqlSession;
 

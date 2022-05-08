@@ -2,7 +2,7 @@ package cc.w0rm.crypto.db.domain;
 
 import java.math.BigDecimal;
 
-public class Btc1m {
+public class Crypto {
     private Integer id;
 
     private Long ts;
@@ -94,15 +94,15 @@ public class Btc1m {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Btc1m other = (Btc1m) that;
+        Crypto other = (Crypto) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getTs() == null ? other.getTs() == null : this.getTs().equals(other.getTs()))
-            && (this.getO() == null ? other.getO() == null : this.getO().equals(other.getO()))
-            && (this.getH() == null ? other.getH() == null : this.getH().equals(other.getH()))
-            && (this.getL() == null ? other.getL() == null : this.getL().equals(other.getL()))
-            && (this.getC() == null ? other.getC() == null : this.getC().equals(other.getC()))
-            && (this.getVol() == null ? other.getVol() == null : this.getVol().equals(other.getVol()))
-            && (this.getVolccy() == null ? other.getVolccy() == null : this.getVolccy().equals(other.getVolccy()));
+                && (this.getTs() == null ? other.getTs() == null : this.getTs().equals(other.getTs()))
+                && (this.getO() == null ? other.getO() == null : this.getO().equals(other.getO()))
+                && (this.getH() == null ? other.getH() == null : this.getH().equals(other.getH()))
+                && (this.getL() == null ? other.getL() == null : this.getL().equals(other.getL()))
+                && (this.getC() == null ? other.getC() == null : this.getC().equals(other.getC()))
+                && (this.getVol() == null ? other.getVol() == null : this.getVol().equals(other.getVol()))
+                && (this.getVolccy() == null ? other.getVolccy() == null : this.getVolccy().equals(other.getVolccy()));
     }
 
     @Override

@@ -3,7 +3,7 @@ package cc.w0rm.crypto.service.impl;
 import cc.w0rm.crypto.biz.BizException;
 import cc.w0rm.crypto.client.okex.OkexClient;
 import cc.w0rm.crypto.common.JsonUtil;
-import cc.w0rm.crypto.db.domain.Btc1m;
+import cc.w0rm.crypto.db.domain.Crypto;
 import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskDetail;
 import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
@@ -48,11 +48,8 @@ public class CryptoServiceImpl implements CryptoService {
                 return;
             }
             List<CandlesDTO> candlesList = okexClient.queryHistoryCandles(historyCandlesBO.getRequestDTO());
-            if (CollectionUtils.isEmpty(candlesList)) {
-                return;
-            }
-            List<Btc1m> btc1mList = convert2Btc1mList(candlesList);
-            int count = dbService.saveHistoryCandles(btc1mList);
+            List<Crypto> cryptoList = convert2CryptoList(candlesList);
+            int count = dbService.saveHistoryCandles(getTableName(historyCandlesBO.getTaskDetail()), cryptoList);
             dbService.finishTaskDetail(historyCandlesBO.getTaskDetail());
 
             log.info("taskDetailId:{}, save:{}.", historyCandlesBO.getTaskDetail().getId(), count);
@@ -106,6 +103,14 @@ public class CryptoServiceImpl implements CryptoService {
         return result;
     }
 
+
+    private String getTableName(TaskDetail taskDetail) {
+        String instID = taskDetail.getInstId().replace("-", "_");
+        instID = instID.toLowerCase(Locale.ROOT);
+
+        return instID + "_" + taskDetail.getBar();
+    }
+
     private static HistoryCandlesRequestDTO newForHistoryCandlesTask(long start, long end, SaveCryptoConfig config) {
         return HistoryCandlesRequestDTO.builder()
                 .instId(config.getInstId())
@@ -116,27 +121,27 @@ public class CryptoServiceImpl implements CryptoService {
                 .build();
     }
 
-    private List<Btc1m> convert2Btc1mList(List<CandlesDTO> candlesList) {
+    private List<Crypto> convert2CryptoList(List<CandlesDTO> candlesList) {
         if (CollectionUtils.isEmpty(candlesList)) {
             return Collections.emptyList();
         }
 
         return candlesList.stream()
-                .map(this::convert2Btc1m)
+                .map(this::convert2Crypto)
                 .collect(Collectors.toList());
     }
 
-    private Btc1m convert2Btc1m(CandlesDTO candlesDTO) {
-        Btc1m btc1m = new Btc1m();
-        btc1m.setTs(candlesDTO.getTs());
-        btc1m.setO(candlesDTO.getOpen());
-        btc1m.setC(candlesDTO.getClose());
-        btc1m.setH(candlesDTO.getHigh());
-        btc1m.setL(candlesDTO.getLow());
-        btc1m.setVol(candlesDTO.getVolume());
-        btc1m.setVolccy(candlesDTO.getVolCcy());
+    private Crypto convert2Crypto(CandlesDTO candlesDTO) {
+        Crypto returnVal = new Crypto();
+        returnVal.setTs(candlesDTO.getTs());
+        returnVal.setO(candlesDTO.getOpen());
+        returnVal.setC(candlesDTO.getClose());
+        returnVal.setH(candlesDTO.getHigh());
+        returnVal.setL(candlesDTO.getLow());
+        returnVal.setVol(candlesDTO.getVolume());
+        returnVal.setVolccy(candlesDTO.getVolCcy());
 
-        return btc1m;
+        return returnVal;
     }
 
 

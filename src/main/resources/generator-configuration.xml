@@ -37,7 +37,7 @@
             <!--            <property name="enableSubPackages" value="false"/>-->
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="cc.w0rm.crypto.db.mappter" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="cc.w0rm.crypto.db.mapper" targetProject="src/main/java">
             <!--            <property name="enableSubPackages" value="false"/>-->
         </javaClientGenerator>
 

@@ -2,9 +2,9 @@ package cc.w0rm.crypto.service.impl;
 
 import cc.w0rm.crypto.biz.BizException;
 import cc.w0rm.crypto.common.JsonUtil;
-import cc.w0rm.crypto.db.domain.Btc1m;
+import cc.w0rm.crypto.db.domain.Crypto;
 import cc.w0rm.crypto.db.domain.TaskDetail;
-import cc.w0rm.crypto.db.repo.Btc1mRepo;
+import cc.w0rm.crypto.db.repo.CryptoRepo;
 import cc.w0rm.crypto.db.repo.TaskDetailRepo;
 import cc.w0rm.crypto.db.repo.TaskRepo;
 import cc.w0rm.crypto.manager.DbManager;
@@ -47,18 +47,18 @@ public class DbServiceImpl implements DbService {
 
 
     @Override
-    public int saveHistoryCandles(List<Btc1m> candlesList) throws Exception {
+    public int saveHistoryCandles(String tableName, List<Crypto> candlesList) throws Exception {
         if (CollectionUtils.isEmpty(candlesList)) {
             return 0;
         }
 
-        Btc1mRepo repo = new Btc1mRepo();
+        CryptoRepo repo = new CryptoRepo();
 
         int returnVal = 0;
 
-        List<List<Btc1m>> partition = Lists.partition(candlesList, MAX_SIZE);
-        for (List<Btc1m> part : partition) {
-            returnVal += repo.batchInsertIgnore(part);
+        List<List<Crypto>> partition = Lists.partition(candlesList, MAX_SIZE);
+        for (List<Crypto> part : partition) {
+            returnVal += repo.batchInsertIgnore(tableName, part);
         }
         return returnVal;
     }
