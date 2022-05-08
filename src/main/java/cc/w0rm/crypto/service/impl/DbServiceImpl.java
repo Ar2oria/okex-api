@@ -83,7 +83,7 @@ public class DbServiceImpl implements DbService {
     }
 
     @Override
-    public void finishTask(TaskDetail taskDetail) throws Exception {
+    public void finishTaskDetail(TaskDetail taskDetail) throws Exception {
         if (Objects.isNull(taskDetail) || Objects.isNull(taskDetail.getId())) {
             throw new BizException("完成任务状态失败，任务id为空! req = " + JsonUtil.toJson(taskDetail));
         }

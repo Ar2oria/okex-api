@@ -53,7 +53,7 @@ public class CryptoServiceImpl implements CryptoService {
             }
             List<Btc1m> btc1mList = convert2Btc1mList(candlesList);
             int count = dbService.saveHistoryCandles(btc1mList);
-            dbService.finishTask(historyCandlesBO.getTaskDetail());
+            dbService.finishTaskDetail(historyCandlesBO.getTaskDetail());
 
             log.info("taskDetailId:{}, save:{}.", historyCandlesBO.getTaskDetail().getId(), count);
         }, taskName, config.getThreads(), config.getInterval());

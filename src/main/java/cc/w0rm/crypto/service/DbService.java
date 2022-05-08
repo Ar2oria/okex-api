@@ -13,5 +13,5 @@ public interface DbService {
 
     List<TaskDetail> selectTaskDetailListByBizId(String generateBizId);
 
-    void finishTask(TaskDetail taskDetail) throws Exception;
+    void finishTaskDetail(TaskDetail taskDetail) throws Exception;
 }
