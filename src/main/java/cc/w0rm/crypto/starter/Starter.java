@@ -11,20 +11,20 @@ public class Starter {
 
     public static void main(String[] args) throws Exception {
         long interval = 1000 / 20 / 2;
-        SaveCryptoConfig btcConfig = createConfig("BTC-USDT", Bar.C_1M, interval);
-        SaveCryptoConfig ethConfig = createConfig("ETH-USDT", Bar.C_1M, interval);
+        SaveCryptoConfig btcConfig = createConfig("BTC-USDT", Bar.C_1M, "2020-01-01", "2022-05-08", interval);
+        SaveCryptoConfig ethConfig = createConfig("ETH-USDT", Bar.C_1M, "2020-01-01", "2022-05-08", interval);
 
         CryptoService cryptoService = new CryptoServiceImpl();
         cryptoService.saveCryptoData(btcConfig);
         cryptoService.saveCryptoData(ethConfig);
     }
 
-    private static SaveCryptoConfig createConfig(String instId, Bar bar, long interval) throws Exception {
+    private static SaveCryptoConfig createConfig(String instId, Bar bar, String start, String end, long interval) throws Exception {
         SaveCryptoConfig saveCryptoConfig = new SaveCryptoConfig();
         saveCryptoConfig.setInstId(instId);
         saveCryptoConfig.setBar(bar);
-        saveCryptoConfig.setBegin(DateTimeUtil.parseDateTs("2020-01-01"));
-        saveCryptoConfig.setEnd(DateTimeUtil.parseDateTs("2022-05-08"));
+        saveCryptoConfig.setBegin(DateTimeUtil.parseDateTs(start));
+        saveCryptoConfig.setEnd(DateTimeUtil.parseDateTs(end));
         saveCryptoConfig.setLimit(100);
         saveCryptoConfig.setThreads(10);
         saveCryptoConfig.setInterval(interval);
