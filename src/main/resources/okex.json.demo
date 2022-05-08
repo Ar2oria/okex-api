@@ -1,0 +1,5 @@
+{
+  "id": "apikey",
+  "secret": "secretkey",
+  "pwd": "phrase"
+}
