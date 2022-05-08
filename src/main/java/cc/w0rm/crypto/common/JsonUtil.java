@@ -1,6 +1,5 @@
 package cc.w0rm.crypto.common;
 
-import cc.w0rm.crypto.model.dto.HistoryCandlesRequestDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;

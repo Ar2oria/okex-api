@@ -42,6 +42,10 @@ public class CryptoServiceImpl implements CryptoService {
         }
 
         List<HistoryCandlesBO> taskList = saveTask(config);
+        if (CollectionUtils.isEmpty(taskList)) {
+            log.warn("任务列表为空。");
+            return;
+        }
 
         TaskManager<HistoryCandlesBO> taskManager = TaskManager.create(taskList, historyCandlesBO -> {
             if (Objects.isNull(historyCandlesBO)) {

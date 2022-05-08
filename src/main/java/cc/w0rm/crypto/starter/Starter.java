@@ -5,6 +5,7 @@ import cc.w0rm.crypto.model.bo.SaveCryptoConfig;
 import cc.w0rm.crypto.model.enums.Bar;
 import cc.w0rm.crypto.service.CryptoService;
 import cc.w0rm.crypto.service.impl.CryptoServiceImpl;
+import org.slf4j.MDC;
 
 public class Starter {
 
