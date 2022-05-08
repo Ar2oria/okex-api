@@ -1,4 +1,4 @@
-CREATE TABLE `btc_usdt_1m`
+CREATE TABLE `eth_usdt_1min`
 (
     `id`     int            NOT NULL AUTO_INCREMENT,
     `ts`     bigint(20) default 0 NOT NULL,
