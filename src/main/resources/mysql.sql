@@ -1,24 +1,3 @@
-CREATE TABLE `${tableName}`
-(
-    `id`     int            NOT NULL AUTO_INCREMENT,
-    `ts`     bigint(20) default 0 NOT NULL,
-    `o`      decimal(16, 8) NOT NULL,
-    `h`      decimal(16, 8) NOT NULL,
-    `l`      decimal(16, 8) NOT NULL,
-    `c`      decimal(16, 8) NOT NULL,
-    `vol`    decimal(16, 8) NOT NULL,
-    `vol_ccy` decimal(16, 8) NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uni_idx_ts` (`ts`),
-    KEY      `idx_o` (`o`),
-    KEY      `idx_h` (`h`),
-    KEY      `idx_l` (`l`),
-    KEY      `idx_c` (`c`),
-    KEY      `idx_vol` (`vol`),
-    KEY      `idx_vol_ccy` (`vol_ccy`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
 create table `task`
 (
     `id`            int         NOT NULL primary key AUTO_INCREMENT,
