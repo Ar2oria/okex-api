@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CryptoServiceImpl implements CryptoService {
 
-    private static final Map<String, TaskManager> taskMap = new ConcurrentHashMap<>();
+    private Map<String, TaskManager> taskMap = new ConcurrentHashMap<>();
 
     private OkexClient okexClient = new OkexClient();
     private DbService dbService = new DbServiceImpl();
@@ -48,8 +48,11 @@ public class CryptoServiceImpl implements CryptoService {
                 return;
             }
             List<CandlesDTO> candlesList = okexClient.queryHistoryCandles(historyCandlesBO.getRequestDTO());
-            List<Candles> candlesEntryList = convert2CryptoList(candlesList);
-            int count = dbService.saveHistoryCandles(getTableName(historyCandlesBO.getTaskDetail()), candlesEntryList);
+            List<Candles> candlesEntryList = convert2CandlesList(candlesList);
+
+            String tableName = getTableName(historyCandlesBO.getTaskDetail());
+
+            int count = dbService.saveHistoryCandles(tableName, candlesEntryList);
             dbService.finishTaskDetail(historyCandlesBO.getTaskDetail());
 
             log.info("taskDetailId:{}, save:{}.", historyCandlesBO.getTaskDetail().getId(), count);
@@ -59,9 +62,9 @@ public class CryptoServiceImpl implements CryptoService {
     }
 
     private List<HistoryCandlesBO> saveTask(SaveCryptoConfig config) throws Exception {
-        List<HistoryCandlesRequestDTO> requestDTOList = calcAndInitTaskList(config);
-
         Task task = convert2Task(config);
+
+        List<HistoryCandlesRequestDTO> requestDTOList = calcAndInitTaskList(config);
         List<TaskDetail> taskDetailList = convert2TaskDetailList(task, requestDTOList);
 
         TaskBO taskBO = new TaskBO();
@@ -121,17 +124,17 @@ public class CryptoServiceImpl implements CryptoService {
                 .build();
     }
 
-    private List<Candles> convert2CryptoList(List<CandlesDTO> candlesList) {
+    private List<Candles> convert2CandlesList(List<CandlesDTO> candlesList) {
         if (CollectionUtils.isEmpty(candlesList)) {
             return Collections.emptyList();
         }
 
         return candlesList.stream()
-                .map(this::convert2Crypto)
+                .map(this::convert2Candles)
                 .collect(Collectors.toList());
     }
 
-    private Candles convert2Crypto(CandlesDTO candlesDTO) {
+    private Candles convert2Candles(CandlesDTO candlesDTO) {
         Candles returnVal = new Candles();
         returnVal.setTs(candlesDTO.getTs());
         returnVal.setO(candlesDTO.getOpen());
