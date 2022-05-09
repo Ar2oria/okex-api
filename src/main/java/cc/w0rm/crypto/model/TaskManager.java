@@ -72,9 +72,10 @@ public class TaskManager<T> {
         return returnVal;
     }
 
-    public void remove() {
+    public synchronized void remove() {
+        if (scheduledThreadPoolExecutor.isShutdown()){
+            return;
+        }
         scheduledThreadPoolExecutor.shutdown();
-        queue.clear();
-        finishCount.set(0);
     }
 }
