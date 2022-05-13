@@ -1,23 +1,18 @@
 package cc.w0rm.crypto.service.impl;
 
 import cc.w0rm.crypto.biz.BizException;
-import cc.w0rm.crypto.client.okex.OkexClient;
 import cc.w0rm.crypto.common.JsonUtil;
+import cc.w0rm.crypto.common.Streams;
 import cc.w0rm.crypto.db.domain.Candles;
 import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskDetail;
 import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
-import cc.w0rm.crypto.model.TaskManager;
-import cc.w0rm.crypto.model.bo.HistoryCandlesBO;
-import cc.w0rm.crypto.model.SaveCryptoConfig;
-import cc.w0rm.crypto.model.bo.TableInfoBO;
-import cc.w0rm.crypto.model.bo.TaskBO;
-import cc.w0rm.crypto.model.dto.CandlesDTO;
-import cc.w0rm.crypto.model.dto.HistoryCandlesRequestDTO;
+import cc.w0rm.crypto.manager.ScheduledTaskManager;
+import cc.w0rm.crypto.model.bo.*;
 import cc.w0rm.crypto.model.enums.Bar;
+import cc.w0rm.crypto.service.ClientService;
 import cc.w0rm.crypto.service.CryptoService;
 import cc.w0rm.crypto.service.DbService;
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -28,9 +23,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CryptoServiceImpl implements CryptoService {
 
-    private Map<String, TaskManager> taskMap = new ConcurrentHashMap<>();
+    private Map<String, ScheduledTaskManager> taskMap = new ConcurrentHashMap<>();
 
-    private OkexClient okexClient = new OkexClient();
+    private ClientService clientService = new ClientServiceImpl();
     private DbService dbService = new DbServiceImpl();
 
 
@@ -38,7 +33,7 @@ public class CryptoServiceImpl implements CryptoService {
     public synchronized void saveCryptoData(SaveCryptoConfig config) throws Exception {
         String taskName = config.getInstId() + "-" + config.getBar();
         if (taskMap.containsKey(taskName)) {
-            TaskManager<?> task = taskMap.get(taskName);
+            ScheduledTaskManager<?> task = taskMap.get(taskName);
             task.remove();
         }
 
@@ -50,11 +45,11 @@ public class CryptoServiceImpl implements CryptoService {
             return;
         }
 
-        TaskManager<HistoryCandlesBO> taskManager = TaskManager.create(taskList, historyCandlesBO -> {
+        ScheduledTaskManager<HistoryCandlesBO> taskManager = ScheduledTaskManager.create(taskList, historyCandlesBO -> {
             if (Objects.isNull(historyCandlesBO)) {
                 return;
             }
-            List<CandlesDTO> candlesList = okexClient.queryHistoryCandles(historyCandlesBO.getRequestDTO());
+            List<CandlesBO> candlesList = clientService.queryHistoryCandles(historyCandlesBO.getRequest());
             List<Candles> candlesEntryList = convert2CandlesList(candlesList);
 
             int count = dbService.saveHistoryCandles(tableInfoBO.getTableName(), candlesEntryList);
@@ -78,8 +73,8 @@ public class CryptoServiceImpl implements CryptoService {
     private List<HistoryCandlesBO> saveTask(SaveCryptoConfig config) throws Exception {
         Task task = convert2Task(config);
 
-        List<HistoryCandlesRequestDTO> requestDTOList = calcAndInitTaskList(config);
-        List<TaskDetail> taskDetailList = convert2TaskDetailList(task, requestDTOList);
+        List<CandlesRequestBO> requestList = calcAndInitTaskList(config);
+        List<TaskDetail> taskDetailList = convert2TaskDetailList(task, requestList);
 
         TaskBO taskBO = new TaskBO();
         taskBO.setTask(task);
@@ -87,14 +82,14 @@ public class CryptoServiceImpl implements CryptoService {
 
         int count = dbService.saveTask(taskBO);
         if (count > 0) {
-            return buildHistoryCandlesBO(taskDetailList, requestDTOList);
+            return buildHistoryCandlesBO(taskDetailList, requestList);
         }
 
         List<TaskDetail> newTaskDetailList = dbService.selectTaskDetailListByBizId(task.getBizId());
         return buildHistoryCandlesBO(newTaskDetailList, null);
     }
 
-    private List<HistoryCandlesRequestDTO> calcAndInitTaskList(SaveCryptoConfig config) throws BizException {
+    private List<CandlesRequestBO> calcAndInitTaskList(SaveCryptoConfig config) throws BizException {
         long begin = config.getBegin();
         long end = config.getEnd();
         Bar bar = config.getBar();
@@ -110,10 +105,10 @@ public class CryptoServiceImpl implements CryptoService {
             throw new BizException("任务数量过多，初始化任务失败！");
         }
         long last;
-        List<HistoryCandlesRequestDTO> result = new ArrayList<>((int) cell);
+        List<CandlesRequestBO> result = new ArrayList<>((int) cell);
         for (long i = begin; i < end; ) {
             last = Math.min(i + taskSize, end);
-            HistoryCandlesRequestDTO t = newForHistoryCandlesTask(i, last, config);
+            CandlesRequestBO t = newForHistoryCandlesTask(i, last, config);
             result.add(t);
             i = last + 1;
         }
@@ -128,17 +123,11 @@ public class CryptoServiceImpl implements CryptoService {
         return instID + "_" + config.getBar().getDesc();
     }
 
-    private static HistoryCandlesRequestDTO newForHistoryCandlesTask(long start, long end, SaveCryptoConfig config) {
-        return HistoryCandlesRequestDTO.builder()
-                .instId(config.getInstId())
-                .bar(config.getBar())
-                .limit(config.getLimit())
-                .before(start)
-                .after(end)
-                .build();
+    private static CandlesRequestBO newForHistoryCandlesTask(long start, long end, SaveCryptoConfig config) {
+        return CandlesRequestBO.buildRequest(config, start, end);
     }
 
-    private List<Candles> convert2CandlesList(List<CandlesDTO> candlesList) {
+    private List<Candles> convert2CandlesList(List<CandlesBO> candlesList) {
         if (CollectionUtils.isEmpty(candlesList)) {
             return Collections.emptyList();
         }
@@ -148,15 +137,15 @@ public class CryptoServiceImpl implements CryptoService {
                 .collect(Collectors.toList());
     }
 
-    private Candles convert2Candles(CandlesDTO candlesDTO) {
+    private Candles convert2Candles(CandlesBO candlesBO) {
         Candles returnVal = new Candles();
-        returnVal.setTs(candlesDTO.getTs());
-        returnVal.setO(candlesDTO.getOpen());
-        returnVal.setC(candlesDTO.getClose());
-        returnVal.setH(candlesDTO.getHigh());
-        returnVal.setL(candlesDTO.getLow());
-        returnVal.setVol(candlesDTO.getVolume());
-        returnVal.setVolCcy(candlesDTO.getVolCcy());
+        returnVal.setTs(candlesBO.getTs());
+        returnVal.setO(candlesBO.getOpen());
+        returnVal.setC(candlesBO.getClose());
+        returnVal.setH(candlesBO.getHigh());
+        returnVal.setL(candlesBO.getLow());
+        returnVal.setVol(candlesBO.getVolume());
+        returnVal.setVolCcy(candlesBO.getVolCcy());
 
         return returnVal;
     }
@@ -193,34 +182,31 @@ public class CryptoServiceImpl implements CryptoService {
                 }).collect(Collectors.toList());
     }
 
-    private List<HistoryCandlesBO> buildHistoryCandlesBO(List<TaskDetail> taskDetailList, List<HistoryCandlesRequestDTO> requestDTOList) {
+    private List<HistoryCandlesBO> buildHistoryCandlesBO(List<TaskDetail> taskDetailList, List<CandlesRequestBO> requestList) {
         if (CollectionUtils.isEmpty(taskDetailList)) {
             return Collections.emptyList();
         }
 
-        if (CollectionUtils.isEmpty(requestDTOList)) {
-            requestDTOList = convert2HistoryCandlesRequestDTO(taskDetailList);
+        if (CollectionUtils.isEmpty(requestList)) {
+            requestList = convert2CandlesRequestList(taskDetailList);
         }
 
         List<HistoryCandlesBO> returnVal = new ArrayList<>(taskDetailList.size());
         for (int i = 0; i < taskDetailList.size(); i++) {
-            returnVal.add(new HistoryCandlesBO(taskDetailList.get(i), requestDTOList.get(i)));
+            returnVal.add(new HistoryCandlesBO(taskDetailList.get(i), requestList.get(i)));
         }
 
         return returnVal;
     }
 
-    private List<HistoryCandlesRequestDTO> convert2HistoryCandlesRequestDTO(List<TaskDetail> taskDetailList) {
+    private List<CandlesRequestBO> convert2CandlesRequestList(List<TaskDetail> taskDetailList) {
         if (CollectionUtils.isEmpty(taskDetailList)) {
             return Collections.emptyList();
         }
 
-        return taskDetailList.stream()
-                .map(task -> {
-                    String params = task.getParams();
-                    return JsonUtil.fromJson(params, new TypeReference<HistoryCandlesRequestDTO>() {
-                    });
-                }).collect(Collectors.toList());
+        return Streams.of(taskDetailList)
+                .map(CandlesRequestBO::parse)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
-
 }

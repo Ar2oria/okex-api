@@ -5,7 +5,7 @@ import cc.w0rm.crypto.client.Client;
 import cc.w0rm.crypto.common.DateTimeUtil;
 import cc.w0rm.crypto.common.JsonUtil;
 import cc.w0rm.crypto.config.GlobalConfig;
-import cc.w0rm.crypto.model.OkApiConfig;
+import cc.w0rm.crypto.model.bo.OkApiConfig;
 import cc.w0rm.crypto.model.dto.BaseResponse;
 import cc.w0rm.crypto.model.dto.CandlesDTO;
 import cc.w0rm.crypto.model.dto.HistoryCandlesRequestDTO;

@@ -1,6 +1,7 @@
-package cc.w0rm.crypto.model;
+package cc.w0rm.crypto.manager;
 
 import cc.w0rm.crypto.common.JsonUtil;
+import cc.w0rm.crypto.model.Consumer;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -16,16 +17,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Data
-public class TaskManager<T> {
+public class ScheduledTaskManager<T> {
     private AtomicInteger finishCount;
     private BlockingQueue<T> queue;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
-    private TaskManager() {
+    private ScheduledTaskManager() {
 
     }
 
-    public static <T> TaskManager<T> create(List<T> taskList, Consumer<T> consumer, String name, int threads, long interval) throws Exception {
+    public static <T> ScheduledTaskManager<T> create(List<T> taskList, Consumer<T> consumer, String name, int threads, long interval) throws Exception {
         int taskCount = taskList.size();
 
         AtomicInteger finishCount = new AtomicInteger();
@@ -33,7 +34,7 @@ public class TaskManager<T> {
         ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(threads,
                 new ThreadFactoryBuilder().setNameFormat(name + "-T%d").build());
 
-        TaskManager<T> returnVal = new TaskManager<>();
+        ScheduledTaskManager<T> returnVal = new ScheduledTaskManager<>();
         returnVal.setFinishCount(finishCount);
         returnVal.setQueue(queue);
         returnVal.setScheduledThreadPoolExecutor(threadPoolExecutor);
@@ -46,7 +47,7 @@ public class TaskManager<T> {
                         return;
                     }
                     if (CollectionUtils.isEmpty(queue) && finishCount.get() == taskCount) {
-                        synchronized (TaskManager.class) {
+                        synchronized (ScheduledTaskManager.class) {
                             if (threadPoolExecutor.isShutdown()) {
                                 return;
                             }

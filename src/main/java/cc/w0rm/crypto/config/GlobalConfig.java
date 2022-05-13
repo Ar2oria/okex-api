@@ -2,7 +2,7 @@ package cc.w0rm.crypto.config;
 
 import cc.w0rm.crypto.common.JsonUtil;
 import cc.w0rm.crypto.common.ResourceUtil;
-import cc.w0rm.crypto.model.OkApiConfig;
+import cc.w0rm.crypto.model.bo.OkApiConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class GlobalConfig {

@@ -1,4 +1,4 @@
-package cc.w0rm.crypto.model;
+package cc.w0rm.crypto.model.bo;
 
 import cc.w0rm.crypto.common.Md5Util;
 import cc.w0rm.crypto.model.enums.Bar;

@@ -1,22 +1,19 @@
 package cc.w0rm.crypto.starter;
 
 import cc.w0rm.crypto.common.DateTimeUtil;
-import cc.w0rm.crypto.model.SaveCryptoConfig;
+import cc.w0rm.crypto.model.bo.SaveCryptoConfig;
 import cc.w0rm.crypto.model.enums.Bar;
-import cc.w0rm.crypto.service.CryptoService;
 import cc.w0rm.crypto.service.impl.CryptoServiceImpl;
 
 public class Starter {
 
 
-    public static void main(String[] args) throws Exception {
-        long interval = 1000 / 20 / 2;
-        SaveCryptoConfig btcConfig = createConfig("BTC-USDT", Bar.C_1M, "2020-01-01", "2022-05-08", interval);
-        SaveCryptoConfig ethConfig = createConfig("ETH-USDT", Bar.C_1M, "2020-01-01", "2022-05-08", interval);
+    public static void main(String[] params) throws Exception {
+        long interval = 1000 / 10;
+        SaveCryptoConfig lunaConfig = createConfig("SHIB-USDT", Bar.C_1M, "2021-02-01", "2022-05-08", interval);
 
-        CryptoService cryptoService = new CryptoServiceImpl();
-        cryptoService.saveCryptoData(btcConfig);
-        cryptoService.saveCryptoData(ethConfig);
+        CryptoServiceImpl cryptoService = new CryptoServiceImpl();
+        cryptoService.saveCryptoData(lunaConfig);
     }
 
     private static SaveCryptoConfig createConfig(String instId, Bar bar, String start, String end, long interval) throws Exception {
