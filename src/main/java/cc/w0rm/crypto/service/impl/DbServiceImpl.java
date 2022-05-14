@@ -2,13 +2,13 @@ package cc.w0rm.crypto.service.impl;
 
 import cc.w0rm.crypto.biz.BizException;
 import cc.w0rm.crypto.common.JsonUtil;
-import cc.w0rm.crypto.db.domain.Candles;
+import cc.w0rm.crypto.db.domain.Candle;
+import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskDetail;
-import cc.w0rm.crypto.db.repo.CandlesRepo;
+import cc.w0rm.crypto.db.repo.CandleRepo;
 import cc.w0rm.crypto.db.repo.TaskDetailRepo;
 import cc.w0rm.crypto.db.repo.TaskRepo;
 import cc.w0rm.crypto.manager.DbManager;
-import cc.w0rm.crypto.model.bo.TaskBO;
 import cc.w0rm.crypto.service.DbService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -23,23 +23,23 @@ public class DbServiceImpl implements DbService {
 
     private static final int MAX_SIZE = 100;
 
-    private CandlesRepo candlesRepo = new CandlesRepo();
+    private CandleRepo candleRepo = new CandleRepo();
     private TaskDetailRepo taskDetailRepo = new TaskDetailRepo();
 
     @Override
-    public int saveTask(TaskBO taskBO) throws Exception {
+    public int saveTask(Task task, List<TaskDetail> taskDetailList) throws Exception {
         return DbManager.openTx(sqlSess -> {
             TaskRepo taskRepo = new TaskRepo(sqlSess);
             TaskDetailRepo taskDetailRepo = new TaskDetailRepo(sqlSess);
 
-            int count = taskRepo.insertIgnore(taskBO.getTask());
+            int count = taskRepo.insertIgnore(task);
             if (count == 0) {
                 return 0;
             }
 
             int returnVal = 0;
 
-            List<List<TaskDetail>> partition = Lists.partition(taskBO.getTaskDetailList(), MAX_SIZE);
+            List<List<TaskDetail>> partition = Lists.partition(taskDetailList, MAX_SIZE);
             for (List<TaskDetail> part : partition) {
                 returnVal += taskDetailRepo.batchInsertIgnore(part);
             }
@@ -50,16 +50,16 @@ public class DbServiceImpl implements DbService {
 
 
     @Override
-    public int saveHistoryCandles(String tableName, List<Candles> candlesList) throws Exception {
-        if (CollectionUtils.isEmpty(candlesList)) {
+    public int saveHistoryCandles(String tableName, List<Candle> candleList) throws Exception {
+        if (CollectionUtils.isEmpty(candleList)) {
             return 0;
         }
 
         int returnVal = 0;
 
-        List<List<Candles>> partition = Lists.partition(candlesList, MAX_SIZE);
-        for (List<Candles> part : partition) {
-            returnVal += candlesRepo.batchInsertIgnore(tableName, part);
+        List<List<Candle>> partition = Lists.partition(candleList, MAX_SIZE);
+        for (List<Candle> part : partition) {
+            returnVal += candleRepo.batchInsertIgnore(tableName, part);
         }
         return returnVal;
     }
@@ -92,18 +92,23 @@ public class DbServiceImpl implements DbService {
 
     @Override
     public synchronized void createCandlesTable(String tableName) throws Exception {
-        if (existsTable(tableName)){
+        if (existsTable(tableName)) {
             return;
         }
 
-        candlesRepo.createTable(tableName);
+        candleRepo.createTable(tableName);
+    }
+
+    @Override
+    public List<Candle> selectCandleList(String tableName, long nowTs, int size) {
+        return candleRepo.selectCandleList(tableName, nowTs, size);
     }
 
     private boolean existsTable(String tableName) {
         try {
-            candlesRepo.selectAny(tableName);
+            candleRepo.selectAny(tableName);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }

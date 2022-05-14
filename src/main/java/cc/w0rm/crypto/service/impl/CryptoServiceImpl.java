@@ -3,14 +3,16 @@ package cc.w0rm.crypto.service.impl;
 import cc.w0rm.crypto.biz.BizException;
 import cc.w0rm.crypto.common.JsonUtil;
 import cc.w0rm.crypto.common.Streams;
-import cc.w0rm.crypto.db.domain.Candles;
+import cc.w0rm.crypto.common.TableUtil;
+import cc.w0rm.crypto.db.domain.Candle;
 import cc.w0rm.crypto.db.domain.Task;
 import cc.w0rm.crypto.db.domain.TaskDetail;
 import cc.w0rm.crypto.db.enums.TaskDetailStatusEnum;
+import cc.w0rm.crypto.gateway.CryptoGateway;
+import cc.w0rm.crypto.gateway.impl.OkexGateway;
 import cc.w0rm.crypto.manager.ScheduledTaskManager;
 import cc.w0rm.crypto.model.bo.*;
 import cc.w0rm.crypto.model.enums.Bar;
-import cc.w0rm.crypto.service.ClientService;
 import cc.w0rm.crypto.service.CryptoService;
 import cc.w0rm.crypto.service.DbService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ public class CryptoServiceImpl implements CryptoService {
 
     private Map<String, ScheduledTaskManager> taskMap = new ConcurrentHashMap<>();
 
-    private ClientService clientService = new ClientServiceImpl();
+    private CryptoGateway okexGateway = new OkexGateway();
     private DbService dbService = new DbServiceImpl();
 
 
@@ -39,23 +41,23 @@ public class CryptoServiceImpl implements CryptoService {
 
         TableInfoBO tableInfoBO = createTable(config);
 
-        List<HistoryCandlesBO> taskList = saveTask(config);
+        List<CandleTaskBO> taskList = saveTask(config);
         if (CollectionUtils.isEmpty(taskList)) {
             log.warn("任务列表为空。");
             return;
         }
 
-        ScheduledTaskManager<HistoryCandlesBO> taskManager = ScheduledTaskManager.create(taskList, historyCandlesBO -> {
-            if (Objects.isNull(historyCandlesBO)) {
+        ScheduledTaskManager<CandleTaskBO> taskManager = ScheduledTaskManager.create(taskList, candleTaskBO -> {
+            if (Objects.isNull(candleTaskBO)) {
                 return;
             }
-            List<CandlesBO> candlesList = clientService.queryHistoryCandles(historyCandlesBO.getRequest());
-            List<Candles> candlesEntryList = convert2CandlesList(candlesList);
+            List<CandleBO> candlesList = okexGateway.queryHistoryCandles(candleTaskBO.getRequest());
+            List<Candle> candleEntryList = convert2CandlesList(candlesList);
 
-            int count = dbService.saveHistoryCandles(tableInfoBO.getTableName(), candlesEntryList);
-            dbService.finishTaskDetail(historyCandlesBO.getTaskDetail());
+            int count = dbService.saveHistoryCandles(tableInfoBO.getTableName(), candleEntryList);
+            dbService.finishTaskDetail(candleTaskBO.getTaskDetail());
 
-            log.info("taskDetailId:{}, save:{}.", historyCandlesBO.getTaskDetail().getId(), count);
+            log.info("taskDetailId:{}, save:{}.", candleTaskBO.getTaskDetail().getId(), count);
         }, taskName, config.getThreads(), config.getInterval());
 
         taskMap.put(taskName, taskManager);
@@ -70,17 +72,13 @@ public class CryptoServiceImpl implements CryptoService {
         return returnVal;
     }
 
-    private List<HistoryCandlesBO> saveTask(SaveCryptoConfig config) throws Exception {
+    private List<CandleTaskBO> saveTask(SaveCryptoConfig config) throws Exception {
         Task task = convert2Task(config);
 
         List<CandlesRequestBO> requestList = calcAndInitTaskList(config);
         List<TaskDetail> taskDetailList = convert2TaskDetailList(task, requestList);
 
-        TaskBO taskBO = new TaskBO();
-        taskBO.setTask(task);
-        taskBO.setTaskDetailList(taskDetailList);
-
-        int count = dbService.saveTask(taskBO);
+        int count = dbService.saveTask(task, taskDetailList);
         if (count > 0) {
             return buildHistoryCandlesBO(taskDetailList, requestList);
         }
@@ -117,17 +115,14 @@ public class CryptoServiceImpl implements CryptoService {
 
 
     private String getTableName(SaveCryptoConfig config) {
-        String instID = config.getInstId().replace("-", "_");
-        instID = instID.toLowerCase(Locale.ROOT);
-
-        return instID + "_" + config.getBar().getDesc();
+        return TableUtil.getTableName(config.getInstId(), config.getBar());
     }
 
     private static CandlesRequestBO newForHistoryCandlesTask(long start, long end, SaveCryptoConfig config) {
         return CandlesRequestBO.buildRequest(config, start, end);
     }
 
-    private List<Candles> convert2CandlesList(List<CandlesBO> candlesList) {
+    private List<Candle> convert2CandlesList(List<CandleBO> candlesList) {
         if (CollectionUtils.isEmpty(candlesList)) {
             return Collections.emptyList();
         }
@@ -137,15 +132,15 @@ public class CryptoServiceImpl implements CryptoService {
                 .collect(Collectors.toList());
     }
 
-    private Candles convert2Candles(CandlesBO candlesBO) {
-        Candles returnVal = new Candles();
-        returnVal.setTs(candlesBO.getTs());
-        returnVal.setO(candlesBO.getOpen());
-        returnVal.setC(candlesBO.getClose());
-        returnVal.setH(candlesBO.getHigh());
-        returnVal.setL(candlesBO.getLow());
-        returnVal.setVol(candlesBO.getVolume());
-        returnVal.setVolCcy(candlesBO.getVolCcy());
+    private Candle convert2Candles(CandleBO candleBO) {
+        Candle returnVal = new Candle();
+        returnVal.setTs(candleBO.getTs());
+        returnVal.setO(candleBO.getOpen());
+        returnVal.setC(candleBO.getClose());
+        returnVal.setH(candleBO.getHigh());
+        returnVal.setL(candleBO.getLow());
+        returnVal.setVol(candleBO.getVolume());
+        returnVal.setVolCcy(candleBO.getVolCcy());
 
         return returnVal;
     }
@@ -182,7 +177,7 @@ public class CryptoServiceImpl implements CryptoService {
                 }).collect(Collectors.toList());
     }
 
-    private List<HistoryCandlesBO> buildHistoryCandlesBO(List<TaskDetail> taskDetailList, List<CandlesRequestBO> requestList) {
+    private List<CandleTaskBO> buildHistoryCandlesBO(List<TaskDetail> taskDetailList, List<CandlesRequestBO> requestList) {
         if (CollectionUtils.isEmpty(taskDetailList)) {
             return Collections.emptyList();
         }
@@ -191,9 +186,9 @@ public class CryptoServiceImpl implements CryptoService {
             requestList = convert2CandlesRequestList(taskDetailList);
         }
 
-        List<HistoryCandlesBO> returnVal = new ArrayList<>(taskDetailList.size());
+        List<CandleTaskBO> returnVal = new ArrayList<>(taskDetailList.size());
         for (int i = 0; i < taskDetailList.size(); i++) {
-            returnVal.add(new HistoryCandlesBO(taskDetailList.get(i), requestList.get(i)));
+            returnVal.add(new CandleTaskBO(taskDetailList.get(i), requestList.get(i)));
         }
 
         return returnVal;

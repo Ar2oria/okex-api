@@ -1,5 +1,7 @@
 package cc.w0rm.crypto.common;
 
+import cc.w0rm.crypto.model.enums.Bar;
+
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -28,5 +30,14 @@ public class DateTimeUtil {
     public static long parseDateTs(String date) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         return sdf.parse(date).getTime();
+    }
+
+    public static long getStartOfTs(long ts, Bar bar) {
+        if (ts == 0) {
+            return 0;
+        }
+
+        long cell = ts / bar.getMillis();
+        return cell * bar.getMillis();
     }
 }

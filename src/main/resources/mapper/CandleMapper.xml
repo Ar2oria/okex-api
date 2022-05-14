@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.w0rm.crypto.db.mapper.CandleMapper">
+    <resultMap id="BaseResultMap" type="cc.w0rm.crypto.db.domain.Candle">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="ts" jdbcType="BIGINT" property="ts" />
+        <result column="o" jdbcType="DECIMAL" property="o" />
+        <result column="h" jdbcType="DECIMAL" property="h" />
+        <result column="l" jdbcType="DECIMAL" property="l" />
+        <result column="c" jdbcType="DECIMAL" property="c" />
+        <result column="vol" jdbcType="DECIMAL" property="vol" />
+        <result column="vol_ccy" jdbcType="DECIMAL" property="volCcy" />
+    </resultMap>
+    <insert id="batchInsertIgnore" keyColumn="id" keyProperty="list.id" useGeneratedKeys="true">
+        insert ignore into ${tableName}
+        (ts, o, h,l, c, vol, vol_ccy)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.ts,jdbcType=BIGINT},
+            #{item.o,jdbcType=DECIMAL},
+            #{item.h,jdbcType=DECIMAL},
+            #{item.l,jdbcType=DECIMAL},
+            #{item.c,jdbcType=DECIMAL},
+            #{item.vol,jdbcType=DECIMAL},
+            #{item.volCcy,jdbcType=DECIMAL}
+            )
+        </foreach>
+
+    </insert>
+
+    <select id="selectAny" resultMap="BaseResultMap">
+        select * from ${tableName} limit 1
+    </select>
+
+    <update id="createTable">
+        CREATE TABLE ${tableName}
+        (
+            `id`     int            NOT NULL AUTO_INCREMENT,
+            `ts`     bigint(20) default 0 NOT NULL,
+            `o`      decimal(16, 8) NOT NULL,
+            `h`      decimal(16, 8) NOT NULL,
+            `l`      decimal(16, 8) NOT NULL,
+            `c`      decimal(16, 8) NOT NULL,
+            `vol`    decimal(16, 8) NOT NULL,
+            `vol_ccy` decimal(16, 8) NOT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `uni_idx_ts` (`ts`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        <selectKey>
+            select 1;
+        </selectKey>
+    </update>
+
+    <select id="selectCandleList" resultType="cc.w0rm.crypto.db.domain.Candle">
+        select * from ${tableName}
+        where ts >= #{nowTs}
+        order by ts
+        limit #{size}
+    </select>
+
+</mapper>
