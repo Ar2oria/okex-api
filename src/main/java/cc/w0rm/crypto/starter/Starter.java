@@ -10,7 +10,7 @@ public class Starter {
 
     public static void main(String[] params) throws Exception {
         long interval = 1000 / 10;
-        SaveCryptoConfig lunaConfig = createConfig("OKB-USDT", Bar.C_1M, "2020-01-01", "2022-05-08", interval);
+        SaveCryptoConfig lunaConfig = createConfig("OKB-USDT", Bar.C_1M, "2022-05-10", "2022-05-15", interval);
 
         CryptoServiceImpl cryptoService = new CryptoServiceImpl();
         cryptoService.saveCryptoData(lunaConfig);
